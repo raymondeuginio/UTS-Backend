@@ -11,7 +11,9 @@ module.exports = (app) => {
   app.use('/users', route);
 
   // Get list of users
-  route.get('/', authenticationMiddleware, usersControllers.getUsers);
+  // route.get('/', authenticationMiddleware, usersControllers.getUsers);
+
+  route.get('/', authenticationMiddleware, usersControllers.getUsersUTS);
 
   // Create user
   route.post(
@@ -42,4 +44,6 @@ module.exports = (app) => {
     celebrate(usersValidator.changePassword),
     usersControllers.changePassword
   );
+
+  route.get;
 };

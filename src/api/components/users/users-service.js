@@ -21,6 +21,53 @@ async function getUsers() {
   return results;
 }
 
+async function getUsersUTS(page_num, page_sz, search, sort) {
+  let potonganSearch = {};
+
+  if (search) {
+    const [field_name, search_key] = search.split(':');
+    potonganSearch[field_name] = { $regex: search_key, $options: 'i' };
+  }
+
+  let potonganSort = {};
+  if (sort) {
+    const [field_name, sort_order] = sort.split(':');
+    if (sort_order === 'asc') {
+      potonganSort[field_name] = 1;
+    } else if (sort_order === 'desc') {
+      potonganSort[field_name] = -1;
+    } else {
+      potonganSort[field_name] = 1;
+    }
+  }
+
+  const pagination = (page_num - 1) * page_sz;
+
+  const users = await usersRepository.getUsersUTS(
+    potonganSearch,
+    potonganSort,
+    pagination,
+    page_sz
+  );
+  const totalUsers = await usersRepository.itungData(search);
+  const totalPage = Math.ceil(totalUsers / page_sz);
+
+  const result = {
+    page_number: page_num,
+    page_size: page_sz,
+    count: totalUsers,
+    total_pages: totalPage,
+    has_previous_page: page_num > 1,
+    has_next_page: page_num < totalPage,
+    data: users,
+  };
+
+  return result;
+}
+
+async function itungData(search) {
+  return usersRepository.itungData(search);
+}
 /**
  * Get user detail
  * @param {string} id - User ID
@@ -162,6 +209,7 @@ async function changePassword(userId, password) {
 }
 
 module.exports = {
+  getUsersUTS,
   getUsers,
   getUser,
   createUser,
@@ -170,4 +218,5 @@ module.exports = {
   emailIsRegistered,
   checkPassword,
   changePassword,
+  itungData,
 };

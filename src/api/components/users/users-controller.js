@@ -17,6 +17,37 @@ async function getUsers(request, response, next) {
   }
 }
 
+async function getUsersUTS(request, response, next) {
+  try {
+    const page_number = request.query.page_number;
+    const page_size = request.query.page_size;
+    const search = request.query.search;
+    const sort = request.query.sort;
+
+    let page_num = parseInt(page_number) || 1;
+    if (page_num <= 0) {
+      page_num = 1;
+    }
+
+    const default_page_size = await usersService.itungData(search);
+    let page_sz = parseInt(page_size) || default_page_size;
+    if (page_sz <= 0) {
+      page_sz = 10;
+    }
+
+    const results = await usersService.getUsersUTS(
+      page_num,
+      page_sz,
+      search,
+      sort
+    );
+
+    return response.status(200).json(results);
+  } catch (error) {
+    return next(error);
+  }
+}
+
 /**
  * Handle get user detail request
  * @param {object} request - Express request object
@@ -190,6 +221,7 @@ async function changePassword(request, response, next) {
 }
 
 module.exports = {
+  getUsersUTS,
   getUsers,
   getUser,
   createUser,

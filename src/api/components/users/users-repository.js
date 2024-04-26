@@ -8,6 +8,18 @@ async function getUsers() {
   return User.find({});
 }
 
+async function getUsersUTS(potonganSearch, potonganSort, pagenation, page_sz) {
+  return User.find(potonganSearch)
+    .sort(potonganSort)
+    .skip(pagenation)
+    .limit(page_sz);
+}
+
+async function itungData(search) {
+  const count = await User.countDocuments(search);
+  return count;
+}
+
 /**
  * Get user detail
  * @param {string} id - User ID
@@ -82,6 +94,7 @@ async function changePassword(id, password) {
 }
 
 module.exports = {
+  getUsersUTS,
   getUsers,
   getUser,
   createUser,
@@ -89,4 +102,5 @@ module.exports = {
   deleteUser,
   getUserByEmail,
   changePassword,
+  itungData,
 };
