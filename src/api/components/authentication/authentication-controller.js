@@ -10,7 +10,6 @@ const authenticationServices = require('./authentication-service');
  */
 async function login(request, response, next) {
   const { email, password } = request.body;
-
   try {
     // Check login credentials
     const loginSuccess = await authenticationServices.checkLoginCredentials(
@@ -19,9 +18,27 @@ async function login(request, response, next) {
     );
 
     if (!loginSuccess) {
+      const attempts = await authenticationServices.getLoginAttempts(email);
       throw errorResponder(
         errorTypes.INVALID_CREDENTIALS,
-        'Wrong email or password'
+        `Wrong email or password. User ${email} failed login. Attempt: ${attempts}`
+      );
+      //   throw errorResponder(
+      //     errorTypes.INVALID_CREDENTIALS,
+      //     `Wrong email or password. User ${email} gagal login. Attempt = ${attemptsLog}.`
+      //   );
+      // } else if (!loginSuccess && attemptsLog === 5) {
+      //   throw errorResponder(
+      //     errorTypes.INVALID_CREDENTIALS,
+      //     `Wrong email or password. User ${email} gagal login. Attempt = ${attemptsLog}. LIMIT REACHED!`
+      //   );
+    }
+
+    if (loginSuccess.attempts >= 5) {
+      const waktuReset = loginSuccess.waktuReset;
+      throw errorResponder(
+        errorTypes.FORBIDDEN,
+        `Too many attempts, try again in ${waktuReset} minutes`
       );
     }
 
