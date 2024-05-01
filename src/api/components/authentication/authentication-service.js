@@ -51,11 +51,6 @@ async function checkLoginCredentials(email, password) {
   }
 }
 
-/**
- * Get the number of login attempts for a given email.
- * @param {string} email - Email
- * @returns {number} The number of login attempts for the given email.
- */
 async function getLoginAttempts(email) {
   const attemptData = loginAttempts.get(email);
   if (attemptData) {

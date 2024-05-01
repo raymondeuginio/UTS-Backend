@@ -23,15 +23,6 @@ async function login(request, response, next) {
         errorTypes.INVALID_CREDENTIALS,
         `Wrong email or password. User ${email} failed login. Attempt: ${attempts}`
       );
-      //   throw errorResponder(
-      //     errorTypes.INVALID_CREDENTIALS,
-      //     `Wrong email or password. User ${email} gagal login. Attempt = ${attemptsLog}.`
-      //   );
-      // } else if (!loginSuccess && attemptsLog === 5) {
-      //   throw errorResponder(
-      //     errorTypes.INVALID_CREDENTIALS,
-      //     `Wrong email or password. User ${email} gagal login. Attempt = ${attemptsLog}. LIMIT REACHED!`
-      //   );
     }
 
     if (loginSuccess.attempts >= 5) {
