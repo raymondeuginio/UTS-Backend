@@ -9,4 +9,20 @@ const route = express.Router();
 
 module.exports = (app) => {
   app.use('/account', route);
+
+  route.post(
+    '/',
+    authenticationMiddleware,
+    celebrate(accountValidator.createAccount),
+    accountControllers.createAccount
+  );
+
+  // route.get('/', authenticationMiddleware, accountControllers.getAccount);
+  // route.put(
+  //   '/',
+  //   authenticationMiddleware,
+  //   celebrate(accountValidator.updateAccount),
+  //   accountControllers.updateAccount
+  // );
+  // route.delete('/', authenticationMiddleware, accountControllers.deleteAccount);
 };
