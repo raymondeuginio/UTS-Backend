@@ -5,6 +5,7 @@ const accountSchema = {
   phone_number: String,
   address: String,
   pin: String,
+  account_number: String,
 };
 
 module.exports = accountSchema;
