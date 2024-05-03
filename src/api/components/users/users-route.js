@@ -44,6 +44,4 @@ module.exports = (app) => {
     celebrate(usersValidator.changePassword),
     usersControllers.changePassword
   );
-
-  route.get;
 };
