@@ -14,8 +14,10 @@ db.once('open', () => {
 });
 
 const User = mongoose.model('users', mongoose.Schema(usersSchema));
+const Account = mongoose.model('account', mongoose.Schema(accountSchema));
 
 module.exports = {
   mongoose,
   User,
+  Account,
 };
