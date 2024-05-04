@@ -11,6 +11,12 @@ module.exports = (app) => {
   app.use('/account', route);
 
   route.post(
+    '/login',
+    celebrate(accountValidator.login),
+    accountControllers.login
+  );
+
+  route.post(
     '/',
     authenticationMiddleware,
     celebrate(accountValidator.createAccount),

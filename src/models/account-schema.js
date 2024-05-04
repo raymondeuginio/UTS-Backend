@@ -6,6 +6,7 @@ const accountSchema = {
   address: String,
   pin: String,
   account_number: String,
+  balance: String,
 };
 
 module.exports = accountSchema;
