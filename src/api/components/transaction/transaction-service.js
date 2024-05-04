@@ -112,6 +112,54 @@ async function deposit(username, amount, pin) {
   };
 }
 
+async function withdraw(username, amount, pin) {
+  const account = await accountRepository.getAccountByUsername(username);
+
+  if (!account) {
+    throw errorResponder(errorTypes.UNPROCESSABLE_ENTITY, 'Username not found');
+  }
+
+  if (account.balance < amount) {
+    throw new Error('Insufficient balance');
+  }
+
+  const accountPin = account ? account.pin : '<RANDOM_PASSWORD_FILLER>';
+
+  const pinChecked = await passwordMatched(pin, accountPin);
+
+  if (!pinChecked) {
+    throw new Error('Incorrect pin');
+  }
+
+  const transaction_id = generateTransactionId();
+  const type = 'Withdraw';
+  const currentDate = new Date();
+  const date_string = currentDate.toISOString().split('T')[0];
+
+  const hour = String(currentDate.getHours()).padStart(2, '0');
+  const minute = String(currentDate.getMinutes()).padStart(2, '0');
+  const second = String(currentDate.getMinutes()).padStart(2, '0');
+  const time_string = `${hour}:${minute}:${second}`;
+
+  await transactionRepository.updateBalanceDepositWithdraw(
+    account.account_number,
+    transaction_id,
+    -amount,
+    type,
+    date_string,
+    time_string
+  );
+
+  return {
+    account_number: account.account_number,
+    transaction_id: transaction_id,
+    balance_before: 'Rp. ' + account.balance,
+    balance_now: 'Rp. ' + (account.balance - amount),
+    date: date_string,
+    time: time_string,
+  };
+}
+
 function generateTransactionId() {
   let characters =
     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -125,4 +173,5 @@ function generateTransactionId() {
 module.exports = {
   transfer,
   deposit,
+  withdraw,
 };

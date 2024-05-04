@@ -17,4 +17,11 @@ module.exports = {
       pin: joi.string().length(6).pattern(/^\d+$/).required(),
     },
   },
+
+  withdraw: {
+    body: {
+      amount: joi.number().required(),
+      pin: joi.string().length(6).pattern(/^\d+$/).required(),
+    },
+  },
 };

@@ -43,7 +43,28 @@ async function deposit(request, response, next) {
   }
 }
 
+async function withdraw(request, response, next) {
+  try {
+    const { amount, pin } = request.body;
+    const username = request.params.username;
+
+    const transaction_result = await transactionService.withdraw(
+      username,
+      amount,
+      pin
+    );
+
+    response.status(200).json({
+      message: 'Withdraw Berhasil',
+      transaction_result,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
 module.exports = {
   transfer,
   deposit,
+  withdraw,
 };

@@ -21,4 +21,10 @@ module.exports = (app) => {
     celebrate(transactionValidator.deposit),
     transactionController.deposit
   );
+
+  route.post(
+    '/:username/withdraw',
+    celebrate(transactionValidator.withdraw),
+    transactionController.withdraw
+  );
 };

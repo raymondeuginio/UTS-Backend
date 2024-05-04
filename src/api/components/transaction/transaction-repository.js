@@ -22,10 +22,11 @@ async function updateBalanceDepositWithdraw(
   date,
   time
 ) {
+  const newAmount = Math.abs(amount);
   Transaction.create({
     account_number,
     transaction_id,
-    amount,
+    amount: newAmount,
     type,
     date,
     time,
