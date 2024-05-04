@@ -18,7 +18,6 @@ module.exports = (app) => {
 
   route.post(
     '/',
-    accountMiddleware,
     celebrate(accountValidator.createAccount),
     accountControllers.createAccount
   );
