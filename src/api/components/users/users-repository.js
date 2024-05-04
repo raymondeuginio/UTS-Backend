@@ -8,9 +8,14 @@ async function getUsers() {
   return User.find({});
 }
 
-async function getUsersUTS(potonganSearch, potonganSort, pagenation, page_sz) {
-  return User.find(potonganSearch)
-    .sort(potonganSort)
+async function getUsersUTS(
+  potongan_search,
+  potongan_sort,
+  pagenation,
+  page_sz
+) {
+  return User.find(potongan_search)
+    .sort(potongan_sort)
     .skip(pagenation)
     .limit(page_sz);
 }

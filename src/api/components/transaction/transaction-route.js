@@ -27,4 +27,10 @@ module.exports = (app) => {
     celebrate(transactionValidator.withdraw),
     transactionController.withdraw
   );
+
+  route.get(
+    '/:username/history',
+    accountMiddleware,
+    transactionController.history
+  );
 };

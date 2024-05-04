@@ -170,8 +170,75 @@ function generateTransactionId() {
   }
   return transactionId;
 }
+
+async function itungData(search) {
+  return transactionRepository.itungData(search);
+}
+
+async function history(username, page_num, page_sz, search_type, sort) {
+  const account = await accountRepository.getAccountByUsername(username);
+  if (!account) {
+    throw errorResponder(errorTypes.UNPROCESSABLE_ENTITY, 'Username not found');
+  }
+
+  const account_number = account.account_number;
+
+  let potongan_search_type = [];
+
+  if (search_type) {
+    const [field_name, search_key] = search.split(':');
+    potongan_search_type[field_name] = { $regex: search_key, $options: 'i' };
+  }
+
+  let potongan_sort = {};
+  if (sort) {
+    const [field_name, sort_order] = sort.split(':');
+    if (sort_order === 'asc') {
+      potongan_sort[field_name] = 1;
+    } else if (sort_order === 'desc') {
+      potongan_sort[field_name] = -1;
+    } else {
+      potongan_sort[field_name] = 1;
+    }
+  }
+
+  const pagination = (page_num - 1) * page_sz;
+
+  const transaction = await transactionRepository.history(
+    account_number,
+    potongan_search_type,
+    potongan_sort,
+    pagination,
+    page_sz
+  );
+
+  const total_transaction = await transactionRepository.itungData(
+    account_number,
+    search_type
+  );
+  const total_page = Math.ceil(total_transaction / page_sz);
+
+  const result = {
+    page_number: page_num,
+    page_size: page_sz,
+    count: total_transaction,
+    total_pages: total_page,
+    has_previous_page: page_num > 1,
+    has_next_page: page_num < total_page,
+    data: transaction,
+  };
+
+  return result;
+}
+
+async function getAccountByUsername(username) {
+  return accountRepository.getAccountByUsername(username);
+}
 module.exports = {
   transfer,
   deposit,
   withdraw,
+  itungData,
+  history,
+  getAccountByUsername,
 };
