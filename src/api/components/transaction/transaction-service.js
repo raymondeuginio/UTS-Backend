@@ -59,11 +59,12 @@ async function transfer(username, amount, description, to_account, pin) {
   );
 
   return {
-    message: 'Transfer complete',
     amount: 'Rp. ' + amount,
     description,
     from_account: fromAccount,
     to_account: toAccount.account_number,
+    date: date_string,
+    time: time_string,
   };
 }
 
@@ -102,11 +103,12 @@ async function deposit(username, amount, pin) {
   );
 
   return {
-    message: 'Deposit Berhasil',
     account_number: account.account_number,
     transaction_id: transaction_id,
     balance_before: 'Rp. ' + account.balance,
     balance_now: 'Rp. ' + (account.balance + amount),
+    date: date_string,
+    time: time_string,
   };
 }
 

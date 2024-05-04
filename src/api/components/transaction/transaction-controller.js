@@ -6,7 +6,7 @@ async function transfer(request, response, next) {
     const { amount, description, to_account, pin } = request.body;
     const username = request.params.username;
 
-    const transactionResult = await transactionService.transfer(
+    const transaction_result = await transactionService.transfer(
       username,
       amount,
       description,
@@ -16,7 +16,7 @@ async function transfer(request, response, next) {
 
     response.status(200).json({
       message: 'Transaction Successful',
-      transaction_result: transactionResult,
+      transaction_result,
     });
   } catch (error) {
     next(error);
@@ -28,7 +28,7 @@ async function deposit(request, response, next) {
     const { amount, pin } = request.body;
     const username = request.params.username;
 
-    const transactionResult = await transactionService.deposit(
+    const transaction_result = await transactionService.deposit(
       username,
       amount,
       pin
@@ -36,7 +36,7 @@ async function deposit(request, response, next) {
 
     response.status(200).json({
       message: 'Deposit Berhasil',
-      transaction_result: transactionResult,
+      transaction_result,
     });
   } catch (error) {
     next(error);
