@@ -1,5 +1,6 @@
 const joi = require('joi');
 const { joiPasswordExtendCore } = require('joi-password');
+const { deleteAccount } = require('./account-service');
 const joiPassword = joi.extend(joiPasswordExtendCore);
 
 module.exports = {
@@ -38,6 +39,38 @@ module.exports = {
         .regex(/^[0-9]{6}$/)
         .required()
         .label('PIN'),
+    },
+  },
+
+  updateAccount: {
+    body: {
+      field: joi.string().required().label('Field'),
+      value: joi.string().required().label('Value'),
+      password: joiPassword
+        .string()
+        .minOfSpecialCharacters(1)
+        .minOfLowercase(1)
+        .minOfUppercase(1)
+        .minOfNumeric(1)
+        .noWhiteSpaces()
+        .onlyLatinCharacters()
+        .min(6)
+        .max(32)
+        .required()
+        .label('Password'),
+    },
+  },
+
+  deleteAccount: {
+    body: {
+      password: joiPassword
+        .string()
+        .noWhiteSpaces()
+        .onlyLatinCharacters()
+        .min(6)
+        .max(32)
+        .required()
+        .label('Password'),
     },
   },
 };

@@ -1,6 +1,7 @@
 const accountRepository = require('./account-repository');
 const { hashPassword, passwordMatched } = require('../../../utils/password');
 const { generateToken } = require('../../../utils/session-token');
+
 const loginAttempts = new Map();
 
 async function checkLoginCredentials(email, password) {
@@ -91,8 +92,8 @@ async function createAccount(
   password,
   phone_number,
   address,
-  pin,
   account_number,
+  pin,
   balance
 ) {
   const hashedPassword = await hashPassword(password);
@@ -121,6 +122,79 @@ function generateAccountNumber() {
   return kodeBank + randomNumber.toString().substring(1);
 }
 
+async function getAccount(username) {
+  const account = await accountRepository.getAccount(username);
+
+  if (!account) {
+    return null;
+  }
+
+  return {
+    username: account.username,
+    account_number: account.account_number,
+    balance: 'Rp. ' + account.balance,
+  };
+}
+
+async function updateAccount(username, field, value, password) {
+  const account = await accountRepository.getAccountByUsername(username);
+  const accountPassword = account
+    ? account.password
+    : '<RANDOM_PASSWORD_FILLER>';
+
+  const passwordChecked = await passwordMatched(password, accountPassword);
+
+  if (!account) {
+    throw new Error('Account with that username not found');
+  }
+
+  if (!passwordChecked) {
+    throw new Error('Incorrect password');
+  }
+
+  if (field === 'account_number') {
+    throw new Error('Account Number cannot be changed');
+  }
+
+  if (field === 'username' && (await usernameIsRegistered(value))) {
+    throw new Error('Username is already taken. Choose another one');
+  }
+
+  if (field === 'email' && (await emailIsRegistered(value))) {
+    throw new Error('Email is already taken. Choose another one');
+  }
+
+  if (field === 'phone_number' && (await phoneIsRegistered(value))) {
+    throw new Error('Phone number is already taken. Choose another one');
+  }
+
+  const fieldUpdate = { [field]: value };
+  const updatedAccount = await accountRepository.updateAccount(
+    username,
+    fieldUpdate
+  );
+
+  return updatedAccount;
+}
+
+async function deleteAccount(username, password) {
+  const account = await accountRepository.getAccountByUsername(username);
+  const accountPassword = account
+    ? account.password
+    : '<RANDOM_PASSWORD_FILLER>';
+  const passwordChecked = await passwordMatched(password, accountPassword);
+
+  if (!account) {
+    throw new Error('Account with that username not found');
+  }
+
+  if (!passwordChecked) {
+    throw new Error('Incorrect password');
+  }
+
+  await accountRepository.deleteUser(username);
+}
+
 module.exports = {
   emailIsRegistered,
   usernameIsRegistered,
@@ -129,4 +203,7 @@ module.exports = {
   checkLoginCredentials,
   getLoginAttempts,
   generateAccountNumber,
+  getAccount,
+  updateAccount,
+  deleteAccount,
 };

@@ -1,6 +1,6 @@
 const express = require('express');
 
-const authenticationMiddleware = require('../../middlewares/authentication-middleware');
+const accountMiddleware = require('../../middlewares/account-middleware');
 const celebrate = require('../../../core/celebrate-wrappers');
 const accountControllers = require('./account-controller');
 const accountValidator = require('./account-validator');
@@ -18,17 +18,24 @@ module.exports = (app) => {
 
   route.post(
     '/',
-    authenticationMiddleware,
+    accountMiddleware,
     celebrate(accountValidator.createAccount),
     accountControllers.createAccount
   );
 
-  // route.get('/', authenticationMiddleware, accountControllers.getAccount);
-  // route.put(
-  //   '/',
-  //   authenticationMiddleware,
-  //   celebrate(accountValidator.updateAccount),
-  //   accountControllers.updateAccount
-  // );
-  // route.delete('/', authenticationMiddleware, accountControllers.deleteAccount);
+  route.get('/:username', accountMiddleware, accountControllers.getAccount);
+
+  route.put(
+    '/:username',
+    accountMiddleware,
+    celebrate(accountValidator.updateAccount),
+    accountControllers.updateAccount
+  );
+
+  route.delete(
+    '/:username',
+    accountMiddleware,
+    celebrate(accountValidator.deleteAccount),
+    accountControllers.deleteAccount
+  );
 };

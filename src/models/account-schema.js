@@ -4,8 +4,8 @@ const accountSchema = {
   password: String,
   phone_number: String,
   address: String,
-  pin: String,
   account_number: String,
+  pin: String,
   balance: String,
 };
 

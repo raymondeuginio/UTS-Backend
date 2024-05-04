@@ -84,8 +84,8 @@ async function createAccount(request, response, next) {
       password,
       phone_number,
       address,
-      pin,
       account_number,
+      pin,
       balance
     );
     if (!success) {
@@ -95,22 +95,81 @@ async function createAccount(request, response, next) {
       );
     }
 
-    return response
-      .status(200)
-      .json({
-        username,
-        email,
-        phone_number,
-        address,
-        account_number,
-        balance,
-      });
+    return response.status(200).json({
+      username,
+      email,
+      phone_number,
+      address,
+      account_number,
+      balance: 'Rp. ' + balance,
+    });
   } catch (error) {
     return next(error);
+  }
+}
+
+async function getAccount(request, response, next) {
+  try {
+    const account = await accountService.getAccount(request.params.username);
+
+    if (!account) {
+      throw errorResponder(errorTypes.UNPROCESSABLE_ENTITY, 'Unknown user');
+    }
+
+    return response.status(200).json(account);
+  } catch (error) {
+    return next(error);
+  }
+}
+
+async function updateAccount(request, response, next) {
+  try {
+    const { username } = request.params;
+    const { field, value, password } = request.body;
+
+    const updatedAccount = await accountService.updateAccount(
+      username,
+      field,
+      value,
+      password
+    );
+
+    return response.status(200).json({
+      message: 'Update berhasil dilakukan',
+      username: updatedAccount.username,
+      email: updatedAccount.email,
+      phone_number: updatedAccount.phone_number,
+      address: updatedAccount.address,
+      account_number: updatedAccount.account_number,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function deleteAccount(request, response, next) {
+  try {
+    const { username } = request.params;
+    const { password } = request.body;
+
+    const success = await accountService.deleteAccount(username, password);
+    if (success) {
+      throw errorResponder(
+        errorTypes.UNPROCESSABLE_ENTITY,
+        'Failed to delete account'
+      );
+    }
+
+    response.status(200).json({ message: 'Account deleted successfully' });
+  } catch (error) {
+    next(error);
   }
 }
 
 module.exports = {
   createAccount,
   login,
+  getAccount,
+  updateAccount,
+  deleteAccount,
 };

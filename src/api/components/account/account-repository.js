@@ -34,9 +34,26 @@ async function createAccount(
   });
 }
 
+async function getAccount(username) {
+  return await Account.findOne({ username: username });
+}
+
+async function updateAccount(username, fieldUpdate) {
+  return await Account.findOneAndUpdate({ username }, fieldUpdate, {
+    new: true,
+  });
+}
+
+async function deleteUser(username) {
+  return await Account.findOneAndDelete({ username });
+}
+
 module.exports = {
   getAccountByEmail,
   getAccountByUsername,
   getAccountByPhoneNumber,
   createAccount,
+  getAccount,
+  updateAccount,
+  deleteUser,
 };
