@@ -97,6 +97,7 @@ async function createAccount(
   balance
 ) {
   const hashedPassword = await hashPassword(password);
+  const hashedPin = await hashPassword(pin);
 
   try {
     await accountRepository.createAccount(
@@ -105,7 +106,7 @@ async function createAccount(
       hashedPassword,
       phone_number,
       address,
-      pin,
+      hashedPin,
       account_number,
       balance
     );
@@ -123,7 +124,8 @@ function generateAccountNumber() {
 }
 
 async function getAccount(username) {
-  const account = await accountRepository.getAccount(username);
+  const usernameLowerCase = username.toLowerCase();
+  const account = await accountRepository.getAccount(usernameLowerCase);
 
   if (!account) {
     return null;

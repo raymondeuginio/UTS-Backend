@@ -113,7 +113,10 @@ async function getAccount(request, response, next) {
     const account = await accountService.getAccount(request.params.username);
 
     if (!account) {
-      throw errorResponder(errorTypes.UNPROCESSABLE_ENTITY, 'Unknown user');
+      throw errorResponder(
+        errorTypes.UNPROCESSABLE_ENTITY,
+        'Username not found'
+      );
     }
 
     return response.status(200).json(account);
