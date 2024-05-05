@@ -170,6 +170,16 @@ async function updateAccount(username, field, value, password) {
     throw new Error('Phone number is already taken. Choose another one');
   }
 
+  if (field === 'password') {
+    const hashedPassword = await hashPassword(value);
+    const fieldUpdate = { [field]: hashedPassword };
+    const updatedAccount = await accountRepository.updateAccount(
+      username,
+      fieldUpdate
+    );
+    return updatedAccount;
+  }
+
   const fieldUpdate = { [field]: value };
   const updatedAccount = await accountRepository.updateAccount(
     username,
