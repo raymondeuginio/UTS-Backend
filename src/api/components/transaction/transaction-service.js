@@ -155,6 +155,7 @@ async function withdraw(username, amount, pin) {
   return {
     account_number: account.account_number,
     transaction_id: transaction_id,
+    amount: 'Rp. ' + amount,
     balance_before: 'Rp. ' + account.balance,
     balance_now: 'Rp. ' + (account.balance - amount),
     date: date_string,
