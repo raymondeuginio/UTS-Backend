@@ -256,19 +256,19 @@ async function delete_history(username, transaction_id, pin) {
     throw errorResponder(errorTypes.UNPROCESSABLE_ENTITY, 'Username not found');
   }
 
-  if (!transaction) {
-    throw errorResponder(
-      errorTypes.UNPROCESSABLE_ENTITY,
-      'Transaction not found'
-    );
-  }
-
   const accountPin = account ? account.pin : '<RANDOM_PASSWORD_FILLER>';
 
   const pinChecked = await passwordMatched(pin, accountPin);
 
   if (!pinChecked) {
     throw new Error('Incorrect pin');
+  }
+
+  if (!transaction) {
+    throw errorResponder(
+      errorTypes.UNPROCESSABLE_ENTITY,
+      'Transaction not found'
+    );
   }
 
   const success = await transactionRepository.delete_history(transaction_id);

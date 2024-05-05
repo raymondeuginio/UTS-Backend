@@ -100,7 +100,7 @@ async function delete_history(request, response, next) {
       pin
     );
 
-    if (success) {
+    if (!success) {
       throw errorResponder(
         errorTypes.UNPROCESSABLE_ENTITY,
         'Failed to delete transaction history'
