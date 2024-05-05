@@ -121,16 +121,16 @@ async function withdraw(username, amount, pin) {
     throw errorResponder(errorTypes.UNPROCESSABLE_ENTITY, 'Username not found');
   }
 
-  if (account.balance < amount) {
-    throw new Error('Insufficient balance');
-  }
-
   const accountPin = account ? account.pin : '<RANDOM_PASSWORD_FILLER>';
 
   const pinChecked = await passwordMatched(pin, accountPin);
 
   if (!pinChecked) {
     throw new Error('Incorrect pin');
+  }
+
+  if (account.balance < amount) {
+    throw new Error('Insufficient balance');
   }
 
   const transaction_id = generateTransactionId();

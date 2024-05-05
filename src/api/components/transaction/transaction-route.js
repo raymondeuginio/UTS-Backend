@@ -26,6 +26,7 @@ module.exports = (app) => {
 
   route.post(
     '/:username/withdraw',
+    accountMiddleware,
     celebrate(transactionValidator.withdraw),
     transactionController.withdraw
   );
