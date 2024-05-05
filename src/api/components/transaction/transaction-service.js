@@ -3,6 +3,16 @@ const accountRepository = require('../account/account-repository');
 const { hashPassword, passwordMatched } = require('../../../utils/password');
 const { errorResponder, errorTypes } = require('../../../core/errors');
 
+/**
+ * Melakukan transfer antar account
+ * @param {string} username - username yang melakukan transfer
+ * @param {number} amount - jumlah uang yang akan ditransfer
+ * @param {string} description - deskripsi transfer
+ * @param {string} to_account - nomor rekening tujuan transfer
+ * @param {string} pin - pin untuk verifikasi transfer
+ * @returns {Promise<Object>} - objek yang mewakili transaksi transfer yang berhasil
+ * @throws {Error} - error jika terjadi kesalahan dalam proses transfer, seperti username tidak ditemukan, nomor rekening tujuan tidak ditemukan, PIN salah, atau saldo tidak mencukupi
+ */
 async function transfer(username, amount, description, to_account, pin) {
   const account = await accountRepository.getAccountByUsername(username);
   const toAccount = await transactionRepository.checkAccountNumber(to_account);
@@ -69,6 +79,14 @@ async function transfer(username, amount, description, to_account, pin) {
   };
 }
 
+/**
+ * Melakukan deposit ke account
+ * @param {string} username - username yang akan menerima deposit
+ * @param {number} amount - jumlah uang yang akan didepositkan
+ * @param {string} pin - pin untuk verifikasi deposit
+ * @returns {Promise<Object>} - objek yang mewakili transaksi deposit yang berhasil
+ * @throws {Error} - error jika terjadi kesalahan dalam proses deposit, seperti username tidak ditemukan atau PIN salah
+ */
 async function deposit(username, amount, pin) {
   const account = await accountRepository.getAccountByUsername(username);
 
@@ -114,6 +132,14 @@ async function deposit(username, amount, pin) {
   };
 }
 
+/**
+ * Melakukan penarikan dari account
+ * @param {string} username - useranme yang akan melakukan penarikan
+ * @param {number} amount - jumlah uang yang akan ditarik
+ * @param {string} pin - pin untuk verifikasi penarikan
+ * @returns {Promise<Object>} - objek yang mewakili transaksi penarikan yang berhasil
+ * @throws {Error} - error jika terjadi kesalahan dalam proses penarikan, seperti username tidak ditemukan, PIN salah, atau saldo tidak mencukupi
+ */
 async function withdraw(username, amount, pin) {
   const account = await accountRepository.getAccountByUsername(username);
 
@@ -163,6 +189,10 @@ async function withdraw(username, amount, pin) {
   };
 }
 
+/**
+ * Menghasilkan transaction_id acak
+ * @returns {string} - transaction_id yang terdiri dari 12 karakter secara acak
+ */
 function generateTransactionId() {
   let characters =
     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -174,10 +204,25 @@ function generateTransactionId() {
   return transactionId;
 }
 
+/**
+ * Menghitung jumlah data yang sesuai dengan kriteria pencarian dalam database
+ * @param {Object} search - kriteria pencarian dalam bentuk objek
+ * @returns {Promise<number>} - jumlah data yang sesuai dengan kriteria pencarian
+ */
 async function itungData(search) {
   return transactionRepository.itungData(search);
 }
 
+/**
+ * Mengembalikan history untuk account tertentu dengan opsi seacrh, sort, pagenation
+ * @param {string} username - username untuk mencari history
+ * @param {number} page_num - no halaman yang diminta
+ * @param {number} page_sz - ukuran halaman yang diminta
+ * @param {string} search - kriteria seacrh
+ * @param {string} sort - kriteria sort
+ * @returns {Promise<Object>} - objek yang berisi informasi history dengan opsi pagenatin
+ * @throws {Error} - error jika username tidak ditemukan
+ */
 async function history(username, page_num, page_sz, search, sort) {
   const account = await accountRepository.getAccountByUsername(username);
 
@@ -243,10 +288,23 @@ async function history(username, page_num, page_sz, search, sort) {
   return result;
 }
 
+/**
+ * Mendapatkan informasi account berdasarkan username
+ * @param {string} username - username untuk mencari informasi account
+ * @returns {Promise<Object|null>} - objek informasi account jika ditemukan, atau null jika tidak ditemukan
+ */
 async function getAccountByUsername(username) {
   return accountRepository.getAccountByUsername(username);
 }
 
+/**
+ * Menghapus history berdasarkan transaction_id
+ * @param {string} username - username yang melakukan penghapusan history
+ * @param {string} transaction_id - transaction_id yang akan dihapus
+ * @param {string} pin - pin pengguna untuk verifikasi penghapusan history
+ * @returns {Promise<boolean>} - true jika penghapusan berhasil, false jika tidak
+ * @throws {Error} - error jika terjadi kesalahan dalam proses penghapusan, seperti username tidak ditemukan, PIN salah, atau transaksi tidak ditemukan
+ */
 async function delete_history(username, transaction_id, pin) {
   const account = await accountRepository.getAccountByUsername(username);
   const transaction =
@@ -274,6 +332,7 @@ async function delete_history(username, transaction_id, pin) {
   const success = await transactionRepository.delete_history(transaction_id);
   return success;
 }
+
 module.exports = {
   transfer,
   deposit,

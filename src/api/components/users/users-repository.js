@@ -8,6 +8,10 @@ async function getUsers() {
   return User.find({});
 }
 
+/**
+ * Get a list of users
+ * @returns {Promise}
+ */
 async function getUsersUTS(
   potongan_search,
   potongan_sort,
@@ -19,6 +23,12 @@ async function getUsersUTS(
     .skip(pagenation)
     .limit(page_sz);
 }
+
+/**
+ * Menghitung jumlah data yang sesuai dengan kriteria pencarian dalam database
+ * @param {Object} search - kriteria pencarian dalam bentuk objek
+ * @returns {Promise<number>} - jumlah data yang sesuai dengan kriteria pencarian
+ */
 
 async function itungData(search) {
   const count = await User.countDocuments(search);

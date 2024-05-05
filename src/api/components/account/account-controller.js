@@ -1,7 +1,13 @@
 const accountService = require('./account-service');
 const { errorResponder, errorTypes } = require('../../../core/errors');
-const { create } = require('lodash');
 
+/**
+ * Handle login request
+ * @param {object} request - Express request object
+ * @param {object} response - Express response object
+ * @param {object} next - Express route middlewares
+ * @returns {object} Response object or pass an error to the next route
+ */
 async function login(request, response, next) {
   const { email, password } = request.body;
   try {
@@ -32,6 +38,13 @@ async function login(request, response, next) {
   }
 }
 
+/**
+ * Handle create account request
+ * @param {object} request - Express request object
+ * @param {object} response - Express response object
+ * @param {object} next - Express route middlewares
+ * @returns {object} Response object or pass an error to the next route
+ */
 async function createAccount(request, response, next) {
   try {
     const {
@@ -108,6 +121,13 @@ async function createAccount(request, response, next) {
   }
 }
 
+/**
+ * Handle get information of account request
+ * @param {object} request - Express request object
+ * @param {object} response - Express response object
+ * @param {object} next - Express route middlewares
+ * @returns {object} Response object or pass an error to the next route
+ */
 async function getAccount(request, response, next) {
   try {
     const account = await accountService.getAccount(request.params.username);
@@ -125,6 +145,13 @@ async function getAccount(request, response, next) {
   }
 }
 
+/**
+ * Handle update account request
+ * @param {object} request - Express request object
+ * @param {object} response - Express response object
+ * @param {object} next - Express route middlewares
+ * @returns {object} Response object or pass an error to the next route
+ */
 async function updateAccount(request, response, next) {
   try {
     const { username } = request.params;
@@ -150,6 +177,13 @@ async function updateAccount(request, response, next) {
   }
 }
 
+/**
+ * Handle delete account request
+ * @param {object} request - Express request object
+ * @param {object} response - Express response object
+ * @param {object} next - Express route middlewares
+ * @returns {object} Response object or pass an error to the next route
+ */
 async function deleteAccount(request, response, next) {
   try {
     const { username } = request.params;

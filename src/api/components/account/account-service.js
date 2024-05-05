@@ -4,6 +4,13 @@ const { generateToken } = require('../../../utils/session-token');
 
 const loginAttempts = new Map();
 
+/**
+ * Memeriksa login valid atau tidak
+ * @param {string} email - email user
+ * @param {string} password - password user
+ * @returns {Object|null} - informasi user jika login valid, atau null jika tidak valid atau terdapat max attempt
+ */
+
 async function checkLoginCredentials(email, password) {
   const account = await accountRepository.getAccountByEmail(email);
 
@@ -47,6 +54,11 @@ async function checkLoginCredentials(email, password) {
   }
 }
 
+/**
+ * Mendapatkan jumlah percobaan login untuk satu email
+ * @param {string} email - email untuk mendapatkan jumlah percobaan login
+ * @returns {number} - jumlah percobaan login untuk alamat email yang diberikan
+ */
 async function getLoginAttempts(email) {
   const attemptData = loginAttempts.get(email);
   if (attemptData) {
@@ -56,6 +68,11 @@ async function getLoginAttempts(email) {
   }
 }
 
+/**
+ * Memeriksa apakah email telah terdaftar atau digunakan pengguna lain
+ * @param {string} email - email yang akan diperiksa
+ * @returns {boolean} - true jika email telah terdaftar, false jika masih bisa dipakai
+ */
 async function emailIsRegistered(email) {
   const account = await accountRepository.getAccountByEmail(email);
 
@@ -66,6 +83,11 @@ async function emailIsRegistered(email) {
   return false;
 }
 
+/**
+ * Memeriksa apakah username telah terdaftar atau digunakan pengguna lain
+ * @param {string} username - username yang akan diperiksa
+ * @returns {boolean} - true jika username telah terdaftar, false jika masih bisa dipakai
+ */
 async function usernameIsRegistered(username) {
   const account = await accountRepository.getAccountByUsername(username);
 
@@ -76,6 +98,11 @@ async function usernameIsRegistered(username) {
   return false;
 }
 
+/**
+ * Memeriksa apakah no telepon telah terdaftar atau digunakan pengguna lain
+ * @param {string} phone_number - no telepon yang akan diperiksa
+ * @returns {boolean} - true jika no telepon telah terdaftar, false jika masih bisa dipakai
+ */
 async function phoneIsRegistered(phone_number) {
   const account = await accountRepository.getAccountByPhoneNumber(phone_number);
 
@@ -86,6 +113,18 @@ async function phoneIsRegistered(phone_number) {
   return false;
 }
 
+/**
+ * Membuat account baru kedalam database
+ * @param {string} username - username untuk account baru
+ * @param {string} email - email untuk account baru
+ * @param {string} password - password untuk account baru
+ * @param {string} phone_number - no telepon untuk account baru
+ * @param {string} address - alamat untuk account baru
+ * @param {string} account_number - nomor rekening untuk account baru
+ * @param {string} pin - pin untuk account baru
+ * @param {number} balance - saldo awal untuk account baru
+ * @returns {boolean|null} - true jika pembuatan account berhasil, atau null jika terjadi kesalahan
+ */
 async function createAccount(
   username,
   email,
@@ -117,12 +156,21 @@ async function createAccount(
   return true;
 }
 
+/**
+ * Menghasilkan nomor rekening baru dengan format 12 angka (angka depan 391)
+ * @returns {string} - Nomor rekening baru yang dihasilkan
+ */
 function generateAccountNumber() {
   const kodeBank = '391';
   const randomNumber = Math.floor(1000000000 + Math.random() * 9000000000);
   return kodeBank + randomNumber.toString().substring(1);
 }
 
+/**
+ * Mendapatkan informasi account berdasarkan nama pengguna
+ * @param {string} username - Nusername untuk mencari informasi account
+ * @returns {Object|null} - informasi account jika ditemukan, atau null jika tidak ditemukan
+ */
 async function getAccount(username) {
   const usernameLowerCase = username.toLowerCase();
   const account = await accountRepository.getAccount(usernameLowerCase);
@@ -138,6 +186,15 @@ async function getAccount(username) {
   };
 }
 
+/**
+ * Memperbarui informasi account
+ * @param {string} username - username akun yang akan diperbarui
+ * @param {string} field - field yang akan diperbarui (contoh: 'username', 'email', 'phone_number', 'password')
+ * @param {string|number} value - value baru untuk bidang yang akan diperbarui
+ * @param {string} password - passwordpengguna untuk verifikasi perubahan
+ * @returns {Object} - informasi akun yang diperbarui
+ * @throws {Error} - rrror jika nama pengguna tidak ditemukan, kata sandi salah, atau bidang yang tidak dapat diubah mencoba untuk diubah
+ */
 async function updateAccount(username, field, value, password) {
   const account = await accountRepository.getAccountByUsername(username);
   const accountPassword = account
@@ -189,6 +246,12 @@ async function updateAccount(username, field, value, password) {
   return updatedAccount;
 }
 
+/**
+ * Menghapus account
+ * @param {string} username - username akun yang akan dihapus
+ * @param {string} password - password pengguna untuk verifikasi penghapusan akun
+ * @throws {Error} - rrror jika nama pengguna tidak ditemukan atau kata sandi salah
+ */
 async function deleteAccount(username, password) {
   const account = await accountRepository.getAccountByUsername(username);
   const accountPassword = account

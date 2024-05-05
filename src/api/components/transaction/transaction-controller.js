@@ -1,6 +1,13 @@
 const transactionService = require('./transaction-service');
 const { errorResponder, errorTypes } = require('../../../core/errors');
 
+/**
+ * Handle transfer money request
+ * @param {object} request - Express request object
+ * @param {object} response - Express response object
+ * @param {object} next - Express route middlewares
+ * @returns {object} Response object or pass an error to the next route
+ */
 async function transfer(request, response, next) {
   try {
     const { amount, description, to_account, pin } = request.body;
@@ -23,6 +30,13 @@ async function transfer(request, response, next) {
   }
 }
 
+/**
+ * Handle deposit money request
+ * @param {object} request - Express request object
+ * @param {object} response - Express response object
+ * @param {object} next - Express route middlewares
+ * @returns {object} Response object or pass an error to the next route
+ */
 async function deposit(request, response, next) {
   try {
     const { amount, pin } = request.body;
@@ -43,6 +57,13 @@ async function deposit(request, response, next) {
   }
 }
 
+/**
+ * Handle withdraw money request
+ * @param {object} request - Express request object
+ * @param {object} response - Express response object
+ * @param {object} next - Express route middlewares
+ * @returns {object} Response object or pass an error to the next route
+ */
 async function withdraw(request, response, next) {
   try {
     const { amount, pin } = request.body;
@@ -63,6 +84,13 @@ async function withdraw(request, response, next) {
   }
 }
 
+/**
+ * Handle see transaction history request
+ * @param {object} request - Express request object
+ * @param {object} response - Express response object
+ * @param {object} next - Express route middlewares
+ * @returns {object} Response object or pass an error to the next route
+ */
 async function history(request, response, next) {
   try {
     const { page_number, page_size, search, sort } = request.query;
@@ -89,6 +117,13 @@ async function history(request, response, next) {
   }
 }
 
+/**
+ * Handle delete transaction history request
+ * @param {object} request - Express request object
+ * @param {object} response - Express response object
+ * @param {object} next - Express route middlewares
+ * @returns {object} Response object or pass an error to the next route
+ */
 async function delete_history(request, response, next) {
   try {
     const { username, transaction_id } = request.params;
