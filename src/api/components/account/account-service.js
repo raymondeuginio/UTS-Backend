@@ -33,7 +33,7 @@ async function checkLoginCredentials(email, password) {
     loginAttempts.delete(email);
     return {
       email: account.email,
-      name: account.name,
+      username: account.username,
       account_number: account.account_number,
       token: generateToken(account.email, account.account_number),
     };
