@@ -3,6 +3,7 @@
 
 NOMOR 3 : 
 FITUR ACCOUNT (endpoint /account)
+
 a. Create User Account (POST /account) : 
 - Input : username, email, password, password_confirm, phone_number, address, pin sebagai body JSON dengan kriteria yang sudah ditentukan pada validator.
 - Cek apakah password dan password_confirm sudah sama atau belum.
