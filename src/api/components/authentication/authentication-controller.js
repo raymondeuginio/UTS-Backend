@@ -19,6 +19,12 @@ async function login(request, response, next) {
 
     if (!loginSuccess) {
       const attempts = await authenticationServices.getLoginAttempts(email);
+      if (attempts === 5) {
+        throw errorResponder(
+          errorTypes.INVALID_CREDENTIALS,
+          `Wrong email or password. User ${email} failed login. Attempt: ${attempts}. LIMIT REACHED!`
+        );
+      }
       throw errorResponder(
         errorTypes.INVALID_CREDENTIALS,
         `Wrong email or password. User ${email} failed login. Attempt: ${attempts}`
