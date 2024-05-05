@@ -29,10 +29,16 @@ async function getUsersUTS(request, response, next) {
       page_num = 1;
     }
 
-    const default_page_size = await usersService.itungData(search);
+    let potongan_search = {};
+
+    if (search) {
+      const [field_name, search_key] = search.split(':');
+      potongan_search[field_name] = { $regex: search_key, $options: 'i' };
+    }
+    const default_page_size = await usersService.itungData(potongan_search);
     let page_sz = parseInt(page_size) || default_page_size;
     if (page_sz <= 0) {
-      page_sz = 10;
+      page_sz = default_page_size;
     }
 
     const results = await usersService.getUsersUTS(

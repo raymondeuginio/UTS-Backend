@@ -49,7 +49,7 @@ async function getUsersUTS(page_num, page_sz, search, sort) {
     pagination,
     page_sz
   );
-  const total_users = await usersRepository.itungData(search);
+  const total_users = await usersRepository.itungData(potongan_search);
   const total_page = Math.ceil(total_users / page_sz);
 
   const result = {
