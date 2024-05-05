@@ -59,6 +59,7 @@ async function transfer(username, amount, description, to_account, pin) {
   );
 
   return {
+    transaction_id: transaction_id_out,
     amount: 'Rp. ' + amount,
     description,
     from_account: fromAccount,
@@ -268,7 +269,8 @@ async function delete_history(username, transaction_id, pin) {
     throw new Error('Incorrect pin');
   }
 
-  await transactionRepository.delete_history(transaction_id);
+  const success = await transactionRepository.delete_history(transaction_id);
+  return success;
 }
 module.exports = {
   transfer,
