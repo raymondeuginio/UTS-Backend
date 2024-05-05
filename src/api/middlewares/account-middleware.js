@@ -18,4 +18,23 @@ passport.use(
   )
 );
 
-module.exports = passport.authenticate('account', { session: false });
+const account_middleware = (request, response, next) => {
+  passport.authenticate('account', { session: false }, (err, account) => {
+    if (err) {
+      return next(err);
+    }
+    if (!account) {
+      return response.status(401).send('Unauthorized');
+    }
+
+    const loged_in = account.username;
+    const requested = request.params.username;
+
+    if (loged_in !== requested) {
+      return response.status(403).send('Anda tidak memiliki akses');
+    }
+    next();
+  })(request, response, next);
+};
+
+module.exports = account_middleware;

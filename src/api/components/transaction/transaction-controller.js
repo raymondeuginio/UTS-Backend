@@ -68,21 +68,12 @@ async function history(request, response, next) {
     const { page_number, page_size, search, sort } = request.query;
     const username = request.params.username;
 
-    const account = await transactionService.getAccountByUsername(username);
-
     let page_num = parseInt(page_number) || 1;
     if (page_num <= 0) {
       page_num = 1;
     }
 
-    const default_page_size = await transactionService.itungData(
-      account.account_number,
-      search
-    );
-    let page_sz = parseInt(page_size) || default_page_size;
-    if (page_sz <= 0) {
-      page_sz = default_page_size;
-    }
+    page_sz = parseInt(page_size);
 
     const results = await transactionService.history(
       username,

@@ -175,19 +175,20 @@ async function itungData(search) {
   return transactionRepository.itungData(search);
 }
 
-async function history(username, page_num, page_sz, search_type, sort) {
+async function history(username, page_num, page_sz, search, sort) {
   const account = await accountRepository.getAccountByUsername(username);
+
   if (!account) {
     throw errorResponder(errorTypes.UNPROCESSABLE_ENTITY, 'Username not found');
   }
 
   const account_number = account.account_number;
 
-  let potongan_search_type = [];
+  let potongan_search = [];
 
-  if (search_type) {
+  if (search) {
     const [field_name, search_key] = search.split(':');
-    potongan_search_type[field_name] = { $regex: search_key, $options: 'i' };
+    potongan_search[field_name] = { $regex: search_key, $options: 'i' };
   }
 
   let potongan_sort = {};
@@ -204,19 +205,27 @@ async function history(username, page_num, page_sz, search_type, sort) {
 
   const pagination = (page_num - 1) * page_sz;
 
+  const total_transaction = await transactionRepository.itungData(
+    account_number,
+    potongan_search
+  );
+
+  if (!page_sz) {
+    page_sz = total_transaction;
+  }
+
   const transaction = await transactionRepository.history(
     account_number,
-    potongan_search_type,
+    potongan_search,
     potongan_sort,
     pagination,
     page_sz
   );
 
-  const total_transaction = await transactionRepository.itungData(
-    account_number,
-    search_type
-  );
-  const total_page = Math.ceil(total_transaction / page_sz);
+  let total_page = Math.ceil(total_transaction / page_sz);
+  if (total_page === 0) {
+    total_page = 1;
+  }
 
   const result = {
     page_number: page_num,

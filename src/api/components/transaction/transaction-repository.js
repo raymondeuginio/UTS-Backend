@@ -63,25 +63,25 @@ async function updateBalance(
   );
 }
 
-async function itungData(account_number, search) {
-  const criteria = { account_number: account_number, ...search };
-
-  // Hitung jumlah dokumen yang sesuai dengan kriteria pencarian
-  const count = await Transaction.countDocuments(criteria);
+async function itungData(account_number, potongan_search) {
+  const count = await Transaction.countDocuments({
+    account_number,
+    ...potongan_search,
+  });
 
   return count;
 }
 
 async function history(
   account_number,
-  potongan_search_type,
+  potongan_search,
   potongan_sort,
   pagenation,
   page_sz
 ) {
   return Transaction.find({
     account_number,
-    ...potongan_search_type,
+    ...potongan_search,
   })
     .sort(potongan_sort)
     .skip(pagenation)
@@ -101,6 +101,11 @@ async function filterData(account_number) {
   Transaction.filter(Transaction.account_number === account_number);
 }
 
+async function itungData1(account_number) {
+  const count = await Transaction.countDocuments(account_number);
+  return count;
+}
+
 module.exports = {
   getAccountByUsername,
   checkAccountNumber,
@@ -110,4 +115,5 @@ module.exports = {
   history,
   getAccountByNumber,
   filterData,
+  itungData1,
 };

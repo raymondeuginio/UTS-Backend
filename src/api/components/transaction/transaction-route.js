@@ -12,12 +12,14 @@ module.exports = (app) => {
 
   route.post(
     '/:username/transfer',
+    accountMiddleware,
     celebrate(transactionValidator.transfer),
     transactionController.transfer
   );
 
   route.post(
     '/:username/deposit',
+    accountMiddleware,
     celebrate(transactionValidator.deposit),
     transactionController.deposit
   );
