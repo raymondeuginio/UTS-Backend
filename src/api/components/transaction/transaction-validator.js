@@ -24,4 +24,10 @@ module.exports = {
       pin: joi.string().length(6).pattern(/^\d+$/).required(),
     },
   },
+
+  delete_history: {
+    body: {
+      pin: joi.string().length(6).pattern(/^\d+$/).required(),
+    },
+  },
 };

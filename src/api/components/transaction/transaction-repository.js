@@ -106,6 +106,18 @@ async function itungData1(account_number) {
   return count;
 }
 
+async function getTransaction(transaction_id) {
+  const transaction = Transaction.findOne({ transaction_id });
+  if (!transaction) {
+    return false;
+  }
+
+  return transaction;
+}
+async function delete_history(transaction_id) {
+  return Transaction.findOneAndDelete({ transaction_id: transaction_id });
+}
+
 module.exports = {
   getAccountByUsername,
   checkAccountNumber,
@@ -116,4 +128,6 @@ module.exports = {
   getAccountByNumber,
   filterData,
   itungData1,
+  getTransaction,
+  delete_history,
 };

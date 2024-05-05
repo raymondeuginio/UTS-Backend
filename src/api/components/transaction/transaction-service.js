@@ -243,6 +243,33 @@ async function history(username, page_num, page_sz, search, sort) {
 async function getAccountByUsername(username) {
   return accountRepository.getAccountByUsername(username);
 }
+
+async function delete_history(username, transaction_id, pin) {
+  const account = await accountRepository.getAccountByUsername(username);
+  const transaction =
+    await transactionRepository.getTransaction(transaction_id);
+
+  if (!account) {
+    throw errorResponder(errorTypes.UNPROCESSABLE_ENTITY, 'Username not found');
+  }
+
+  if (!transaction) {
+    throw errorResponder(
+      errorTypes.UNPROCESSABLE_ENTITY,
+      'Transaction not found'
+    );
+  }
+
+  const accountPin = account ? account.pin : '<RANDOM_PASSWORD_FILLER>';
+
+  const pinChecked = await passwordMatched(pin, accountPin);
+
+  if (!pinChecked) {
+    throw new Error('Incorrect pin');
+  }
+
+  await transactionRepository.delete_history(transaction_id);
+}
 module.exports = {
   transfer,
   deposit,
@@ -250,4 +277,5 @@ module.exports = {
   itungData,
   history,
   getAccountByUsername,
+  delete_history,
 };

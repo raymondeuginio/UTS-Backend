@@ -35,4 +35,11 @@ module.exports = (app) => {
     accountMiddleware,
     transactionController.history
   );
+
+  route.delete(
+    '/:username/:transaction_id',
+    accountMiddleware,
+    celebrate(transactionValidator.delete_history),
+    transactionController.delete_history
+  );
 };
